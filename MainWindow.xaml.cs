@@ -13,50 +13,69 @@ namespace HSTDemo
     public partial class MainWindow : Window
     {
         public SeriesCollection SeriesCollection { get; set; }
-        public double[] Labels;
+        public double[][] Labels;
         public double[] Temps;
         public MainWindow()
         {
             InitializeComponent();
-
-            Labels = new double[51];
-            SeriesCollection = new SeriesCollection
+            SeriesCollection = new SeriesCollection 
             {
-                new LineSeries
-                {
-                    Values = new ChartValues<ObservablePoint>{},
-                    Fill = Brushes.Transparent,
-                }
-
+                                    new LineSeries
+                    {
+                        Values = new ChartValues<ObservablePoint> { },
+                        //LineSmoothness = 1,
+                        Fill = Brushes.Transparent,
+                    }
             };
+            double arh = 0.1f;
+            Labels = new double[10][];
+
+            for (int i = 0; i < 10; i++)
+            {
+                Labels[i] = new double[51];
+                SeriesCollection.Add(
+                    new LineSeries
+                    {
+                        Values = new ChartValues<ObservablePoint> { },
+                        LineSmoothness = 1,
+                        Fill = Brushes.Transparent,
+                    }
+                    );
+            }
+            
             GetTemperature(out Temps);
 
             ConsoleManager.Show();//打开控制台窗口
-            for (int i = 0; i <= 50; i++)
+            for (int j = 0; j < 10; j++)
             {
-                //数据计算
-                double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
-                double mc = MoistureContent(svp, 0.12f, 1013.0f);
-                Labels[i] = mc;
+                arh += 0.2f;
+                for (int i = 0; i < 51; i++)
+                {
+                    //数据计算
+                    double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
+                    double mc = MoistureContent(svp, arh, 1013.0f);
+                    Labels[j][i] = mc;
 
-                var op = new ObservablePoint(Labels[i], Temps[i]);
-                SeriesCollection[0].Values.Add(op);
+                    var op = new ObservablePoint(Labels[j][i], Temps[i]);
+                    SeriesCollection[j].Values.Add(op);
 
-                //调试信息
-                Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
+                    //调试信息
+                    Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
 
+                }
             }
+
 
             DataContext = this;
 
         }
-
+        //计算函数
         public void GetTemperature(out double[] labels)
         {
             double startTemp = -10f;
             double[] dataTemp = new double[51];
 
-            for (int i = 0; i <= 50; i++)
+            for (int i = 0; i < 51; i++)
             {
                 dataTemp[i] = startTemp;
                 startTemp += 1;
