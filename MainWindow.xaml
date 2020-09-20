@@ -11,26 +11,23 @@
         <lvc:CartesianChart Grid.Row="0" Series="{Binding SeriesCollection}" LegendLocation="None" Background="Gray">
             <!--定义X轴-->
             <lvc:CartesianChart.AxisY>
-                <lvc:Axis Title="温度">
+                <lvc:Axis Title="温度" MaxValue="40" MinValue="-10">
                     <lvc:Axis.Separator>
-                        <lvc:Separator StrokeDashArray=" 5" StrokeThickness="1" Stroke="AntiqueWhite" Step="10" />
+                        <lvc:Separator StrokeThickness="0" Stroke="AntiqueWhite" Step="10" />
                     </lvc:Axis.Separator>
                 </lvc:Axis>
             </lvc:CartesianChart.AxisY>
             
             <!--定义X轴-->
-            
+
             <lvc:CartesianChart.AxisX>
-                <lvc:Axis Title="含湿量">
+                <lvc:Axis Title="含湿量" Position="RightTop" MaxValue="10" MinValue="0">
                     <lvc:Axis.Separator>
-                        <lvc:Separator StrokeDashArray=" 5" StrokeThickness="1" Stroke="AntiqueWhite" Step="1" />
+                        <lvc:Separator StrokeThickness="0" Stroke="AntiqueWhite" Step="1" />
                     </lvc:Axis.Separator>
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
-            <!--设置轴线-->
-            <!--<lvc:CartesianChart.AxisX>
-                <lvc:Axis x:Name="myaxisx"/>
-            </lvc:CartesianChart.AxisX>-->
+
             <!--设置提示-->
             <lvc:CartesianChart.DataTooltip>
                 <lvc:DefaultTooltip x:Name="mytooltip" Background="LightCyan"  />
