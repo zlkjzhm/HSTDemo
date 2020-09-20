@@ -27,6 +27,7 @@ namespace HSTDemo
                 };
 
             //Labels = new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+            GetTemperature(out Labels);
             //YFormatter = value => value.ToString("C");
 
             //modifying the series collection will animate and update the chart
@@ -44,9 +45,27 @@ namespace HSTDemo
         }
 
         public SeriesCollection SeriesCollection { get; set; }
-        //public string[] Labels { get; set; }
+        public float[] Labels;
         //public Func<double, string> YFormatter { get; set; }
 
+        public void GetTemperature(out float[] labels)
+        {
+            float startTemp = -10f;
+            float[] dataTemp = new float[51];
+            ConsoleManager.Show();//打开控制台窗口
+
+            for (int i = 0; i <= 50; i++)
+            {
+                dataTemp[i] = startTemp;
+                startTemp += 1;
+            }
+            labels = dataTemp;
+            for (int i = 0; i <= 50; i++)
+            {
+                Console.Write(labels[i]+"\n");
+
+            }
+        }
 
     }
 }
