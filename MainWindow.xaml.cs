@@ -12,65 +12,44 @@ namespace HSTDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        public SeriesCollection SeriesCollection { get; set; }
+        public double[] Labels;
+        public double[] Temps;
         public MainWindow()
         {
             InitializeComponent();
 
-            //Labels = new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-            GetTemperature(out Temps);
             Labels = new double[51];
             SeriesCollection = new SeriesCollection
             {
-                //new LineSeries
-                //{
-                //   // Title = "2月6日",
-                //    Values = new ChartValues<double>  {},
-                //    Fill = Brushes.Transparent,
-
-                //},
                 new LineSeries
                 {
-                    Values = new ChartValues<ObservablePoint>
-                    {
-
-                    },
+                    Values = new ChartValues<ObservablePoint>{},
                     Fill = Brushes.Transparent,
                 }
 
             };
+            GetTemperature(out Temps);
+
             ConsoleManager.Show();//打开控制台窗口
             for (int i = 0; i <= 50; i++)
             {
+                //数据计算
                 double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
                 double mc = MoistureContent(svp, 0.12f, 1013.0f);
                 Labels[i] = mc;
-                //SeriesCollection[0].Values.Add(Temps[i]);
+
                 var op = new ObservablePoint(Labels[i], Temps[i]);
                 SeriesCollection[0].Values.Add(op);
+
+                //调试信息
                 Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
 
             }
-            //YFormatter = value => value.ToString("C");
-
-            //modifying the series collection will animate and update the chart
-            //seriesCollection.Add(new LineSeries
-            //{
-            //    Values = new ChartValues<double> { 5, 3, 2, 4 },
-            //    LineSmoothness = 0 //straight lines, 1 really smooth lines
-            //});
-
-            ////modifying any series values will also animate and update the chart
-            //seriesCollection[2].Values.Add(5d);
 
             DataContext = this;
 
         }
-
-        public SeriesCollection SeriesCollection { get; set; }
-        public double[] Labels;
-        public double[] Temps;
-
-        //public Func<double, string> YFormatter { get; set; }
 
         public void GetTemperature(out double[] labels)
         {
