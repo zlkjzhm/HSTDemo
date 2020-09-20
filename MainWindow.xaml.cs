@@ -14,7 +14,6 @@ namespace HSTDemo
         {
             InitializeComponent();
 
-            LineSeries ls1 = new LineSeries();
             SeriesCollection = new SeriesCollection
                 {
                     //new LineSeries
