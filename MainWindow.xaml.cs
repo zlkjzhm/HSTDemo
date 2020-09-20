@@ -18,15 +18,7 @@ namespace HSTDemo
         public MainWindow()
         {
             InitializeComponent();
-            SeriesCollection = new SeriesCollection 
-            {
-                                    new LineSeries
-                    {
-                        Values = new ChartValues<ObservablePoint> { },
-                        //LineSmoothness = 1,
-                        Fill = Brushes.Transparent,
-                    }
-            };
+            SeriesCollection = new SeriesCollection{};
             double arh = 0.1f;
             Labels = new double[10][];
 
@@ -37,8 +29,10 @@ namespace HSTDemo
                     new LineSeries
                     {
                         Values = new ChartValues<ObservablePoint> { },
-                        LineSmoothness = 1,
+                        LineSmoothness = 0,
                         Fill = Brushes.Transparent,
+                        PointGeometrySize = 0,
+                        //DataLabels = true,
                     }
                     );
             }

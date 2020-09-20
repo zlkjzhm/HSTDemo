@@ -13,7 +13,7 @@
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis Title="温度" MaxValue="40" MinValue="-10">
                     <lvc:Axis.Separator>
-                        <lvc:Separator StrokeThickness="0" Stroke="AntiqueWhite" Step="1" />
+                        <lvc:Separator StrokeThickness="1" Stroke="AntiqueWhite" Step="1" />
                     </lvc:Axis.Separator>
                 </lvc:Axis>
             </lvc:CartesianChart.AxisY>
@@ -23,7 +23,7 @@
             <lvc:CartesianChart.AxisX>
                 <lvc:Axis Title="含湿量" Position="RightTop" MaxValue="50" MinValue="0">
                     <lvc:Axis.Separator>
-                        <lvc:Separator StrokeThickness="0" Stroke="AntiqueWhite" Step="1" />
+                        <lvc:Separator StrokeThickness="1" Stroke="AntiqueWhite" Step="1" />
                     </lvc:Axis.Separator>
                 </lvc:Axis>
             </lvc:CartesianChart.AxisX>
