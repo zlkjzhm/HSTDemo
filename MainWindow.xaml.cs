@@ -13,6 +13,9 @@ namespace HSTDemo
     public partial class MainWindow : Window
     {
         public SeriesCollection SeriesCollection { get; set; }
+        //public VisualElement XDSDVisualElement { get; set; }
+        public VisualElementsCollection Visuals { get; set; }
+
         public double[][] Labels;
         public double[] Temps;
         public MainWindow()
@@ -22,6 +25,8 @@ namespace HSTDemo
             double arh = 0.1f;
             Labels = new double[10][];
 
+            Visuals = new VisualElementsCollection { };
+     
             for (int i = 0; i < 10; i++)
             {
                 Labels[i] = new double[51];
@@ -42,7 +47,8 @@ namespace HSTDemo
             ConsoleManager.Show();//打开控制台窗口
             for (int j = 0; j < 10; j++)
             {
-                arh += 0.2f;
+                bool isShowVE = false;
+                arh += 0.02f;
                 for (int i = 0; i < 51; i++)
                 {
                     //数据计算
@@ -52,7 +58,19 @@ namespace HSTDemo
 
                     var op = new ObservablePoint(Labels[j][i], Temps[i]);
                     SeriesCollection[j].Values.Add(op);
-
+                    if((Temps[i] >= 40.0 || Labels[j][i] >= 50) && !isShowVE)
+                    {
+                        var ve = new VisualElement
+                        {
+                            X = Labels[j][i-1],
+                            Y = Temps[i-1],
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                            UIElement = new XDSDVEControl(arh)
+                        };
+                        Visuals.Add(ve);
+                        isShowVE = true;
+                    }
                     //调试信息
                     Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
 

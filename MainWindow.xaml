@@ -8,7 +8,7 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
-        <lvc:CartesianChart Grid.Row="0" Series="{Binding SeriesCollection}" LegendLocation="None" Background="Gray">
+        <lvc:CartesianChart Grid.Row="0" VisualElements="{Binding Visuals}" Series="{Binding SeriesCollection}" LegendLocation="None" Background="Gray">
             <!--定义X轴-->
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis Title="温度" MaxValue="40" MinValue="-10">
@@ -29,9 +29,18 @@
             </lvc:CartesianChart.AxisX>
 
             <!--设置提示-->
-            <lvc:CartesianChart.DataTooltip>
+            <!--<lvc:CartesianChart.DataTooltip>
                 <lvc:DefaultTooltip x:Name="mytooltip" Background="LightCyan"  />
-            </lvc:CartesianChart.DataTooltip>
+            </lvc:CartesianChart.DataTooltip>-->
+            <!--<lvc:CartesianChart.VisualElements>
+                <lvc:VisualElement X="0.5" Y="8">
+                    <lvc:VisualElement.UIElement>
+                        <TextBlock Foreground="Green">
+                            Hello !,this is a note merged in the chart.
+                        </TextBlock>
+                    </lvc:VisualElement.UIElement>
+                </lvc:VisualElement>
+            </lvc:CartesianChart.VisualElements>-->
         </lvc:CartesianChart>
     </Grid>
 </Window>
