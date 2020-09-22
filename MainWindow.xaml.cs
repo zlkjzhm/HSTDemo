@@ -1,7 +1,9 @@
 ﻿using LiveCharts;
+using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System;
 using System.Windows;
+using System.Windows.Media;
 
 namespace HSTDemo
 {
@@ -10,64 +12,112 @@ namespace HSTDemo
     /// </summary>
     public partial class MainWindow : Window
     {
+        public SeriesCollection SeriesCollection { get; set; }
+        //public VisualElement XDSDVisualElement { get; set; }
+        public VisualElementsCollection Visuals { get; set; }
+
+        public double[][] Labels;
+        public double[] Temps;
         public MainWindow()
         {
             InitializeComponent();
+            SeriesCollection = new SeriesCollection{};
+            double arh = 0.1f;
+            Labels = new double[10][];
 
-            LineSeries ls1 = new LineSeries();
-            SeriesCollection = new SeriesCollection
+            Visuals = new VisualElementsCollection { };
+     
+            for (int i = 0; i < 10; i++)
+            {
+                Labels[i] = new double[51];
+                SeriesCollection.Add(
+                    new LineSeries
+                    {
+                        Values = new ChartValues<ObservablePoint> { },
+                        LineSmoothness = 0,
+                        Fill = Brushes.Transparent,
+                        PointGeometrySize = 0,
+                        //DataLabels = true,
+                    }
+                    );
+            }
+            
+            GetTemperature(out Temps);
+
+            ConsoleManager.Show();//打开控制台窗口
+            for (int j = 0; j < 10; j++)
+            {
+                bool isShowVE = false;
+                arh += 0.02f;
+                for (int i = 0; i < 51; i++)
                 {
-                    new LineSeries
+                    //数据计算
+                    double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
+                    double mc = MoistureContent(svp, arh, 1013.0f);
+                    Labels[j][i] = mc;
+
+                    var op = new ObservablePoint(Labels[j][i], Temps[i]);
+                    SeriesCollection[j].Values.Add(op);
+                    if((Temps[i] >= 40.0 || Labels[j][i] >= 50) && !isShowVE)
                     {
-                        Title = "2月6日",
-                        Values = new ChartValues<double>  { -4, -4, -5, -56, -7, -8, -9, -8, -6, -4, -5, -5, -2, -1, 0, 1, 3, 6, 6, 4, 52, 1, -1, -2},
-                        //Fill = Brushes.Transparent,
+                        var ve = new VisualElement
+                        {
+                            X = Labels[j][i-1],
+                            Y = Temps[i-1],
+                            HorizontalAlignment = HorizontalAlignment.Left,
+                            VerticalAlignment = VerticalAlignment.Bottom,
+                            UIElement = new XDSDVEControl(arh)
+                        };
+                        Visuals.Add(ve);
+                        isShowVE = true;
+                    }
+                    //调试信息
+                    Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
 
-                    },
-                    new LineSeries
-                    {
-                        Title = "9月5日",
-                        Values = new ChartValues<double> { 23, 22, 22, 21, -21, 21, 21, 22, 23, 25, 26, 27, 29, -30, 31, 31, 31, 30, 28, 26, 25, 24, 24, 23},
-                        //Fill = Brushes.Transparent,
+                }
+            }
 
-                    },
-
-                    new LineSeries
-                    {
-                        Title = "5月18日",
-                        Values = new ChartValues<double>  { 15, -4, -5, -6, -7, -8, 34, -8, -6, -4, 124, -5, 33, -1, 0, 1, 3, 6, 6, 4, 2, 1, -1, -2},
-                        //Fill = Brushes.Transparent,
-
-                    },
-                    new LineSeries
-                    {
-                        Title = "7月17日",
-                        Values = new ChartValues<double> { 23, 89, 22, 21, 45, 21, 21, 22, 23, -25, 26, 27, 78, 3, 4, 41, 33, 30, 28, 26, 25, 24, 24, 23},
-                        //Fill = Brushes.Transparent,
-
-                    },
-                };
-
-            Labels = new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9" };
-            //YFormatter = value => value.ToString("C");
-
-            //modifying the series collection will animate and update the chart
-            //seriesCollection.Add(new LineSeries
-            //{
-            //    Values = new ChartValues<double> { 5, 3, 2, 4 },
-            //    LineSmoothness = 0 //straight lines, 1 really smooth lines
-            //});
-
-            ////modifying any series values will also animate and update the chart
-            //seriesCollection[2].Values.Add(5d);
 
             DataContext = this;
 
         }
+        //计算函数
+        public void GetTemperature(out double[] labels)
+        {
+            double startTemp = -10f;
+            double[] dataTemp = new double[51];
 
-        public SeriesCollection SeriesCollection { get; set; }
-        public string[] Labels { get; set; }
-        public Func<double, string> YFormatter { get; set; }
+            for (int i = 0; i < 51; i++)
+            {
+                dataTemp[i] = startTemp;
+                startTemp += 1;
+            }
+            labels = dataTemp;
+ 
+        }
+
+        /// <summary>
+        /// 计算饱和水蒸气压力Pˋˋ
+        /// </summary>
+        /// <param name="t">空气温度</param>
+        /// <returns></returns>
+        public double SaturationVaporPressure(double t)
+        {
+            double E = 2.0057173f - 3.142305f * (1000.0f / (273.15f + t) - 1000.0f / 373.15f) + 8.2f * Math.Log10(373.15f / (273.15f + t)) - 0.0024804f * (100.0f - t);
+            double P = Math.Pow(10, E);
+            return P * 10; //转换成hPa
+        }
+
+        /// <summary>
+        /// 湿空气的含湿量χ
+        /// </summary>
+        /// <returns></returns>
+        public double MoistureContent(double SVP, double ARH, double AirPressure)
+        {
+            double MC = 622f * ARH * SVP / (AirPressure - ARH * SVP);//g/kg
+            return MC;
+        }
+
     }
 }
 
