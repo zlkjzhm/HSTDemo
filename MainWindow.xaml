@@ -6,13 +6,13 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:HSTDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800" Background="Gray">
+        Title="MainWindow" Height="450" Width="800" Background="Gray" WindowState="Maximized" >
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <lvc:CartesianChart x:Name="cartesianChart" VisualElements="{Binding Visuals, Mode=TwoWay}"  Grid.Row="0"  Series="{Binding SeriesCollection, Mode=TwoWay}" LegendLocation="None" Background="Gray" >
+        <lvc:CartesianChart x:Name="cartesianChart" VisualElements="{Binding Visuals, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="0"  Series="{Binding SeriesCollection, UpdateSourceTrigger=PropertyChanged}" LegendLocation="None" Background="Gray" >
 
             <!--定义X轴-->
             <lvc:CartesianChart.AxisY>
@@ -47,7 +47,7 @@
                 </lvc:VisualElement>
             </lvc:CartesianChart.VisualElements>-->
         </lvc:CartesianChart>
-        <TextBox Width="65" Height="30" Text="{Binding Pressure, Mode=TwoWay}" Grid.Row="1" KeyUp="PressureKeyUp" MouseLeave="PressureMouseLeave" />
+        <TextBox Width="65" Height="30" Text="{Binding Pressure, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" KeyUp="PressureKeyUp" MouseLeave="PressureMouseLeave" />
 
     </Grid>
 </Window>

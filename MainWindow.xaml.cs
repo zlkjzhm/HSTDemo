@@ -29,8 +29,6 @@ namespace HSTDemo
             }
         
         }
-        public VisualElement XDSDVisualElement { get; set; }
-
         public VisualElementsCollection visuals;
 
         public VisualElementsCollection Visuals
@@ -42,9 +40,15 @@ namespace HSTDemo
                 OnPropertyChanged("Visuals");
             }
         }
+        //private double pressure;
+        public double Pressure { get; set; }
 
+
+        //public VisualElement XDSDVisualElement { get; set; }
         public double[][] Labels;
         public double[] Temps;
+        public double[] SVPs;
+        private double[] arh;
 
         public event PropertyChangedEventHandler PropertyChanged;
         private void OnPropertyChanged(string propertyName)
@@ -56,7 +60,6 @@ namespace HSTDemo
             }
         }
 
-        public double Pressure { get; set; }
 
         public MainWindow()
         {
@@ -65,22 +68,23 @@ namespace HSTDemo
 
             //ConsoleManager.Show();//打开控制台窗口
             //UpdateXDSD(1013.25);
-                UpdateXDSD(1033);
+            InitXDSD(233);
 
 
 
             DataContext = this;
 
         }
-        public void UpdateXDSD(double pressure)
+        public void InitXDSD(double pressure)
         {
-            double arh = 0.1f;
             Visuals = new VisualElementsCollection { };
             SeriesCollection = new SeriesCollection { };
             Labels = new double[10][];
+            arh = new double[10];
 
             for (int i = 0; i < 10; i++)
             {
+                arh[i] = 0.1 + 0.05 * i;
                 Labels[i] = new double[51];
                 SeriesCollection.Add(
                     new LineSeries
@@ -92,49 +96,89 @@ namespace HSTDemo
                         //DataLabels = true,
                     }
                     );
+
+                Visuals.Add(
+                   new VisualElement
+                   {
+                       HorizontalAlignment = HorizontalAlignment.Left,
+                       VerticalAlignment = VerticalAlignment.Center,
+                       UIElement = new XDSDVEControl(arh[i])
+                   }
+                    );
             }
 
             GetTemperature(out Temps);
-
+            SVPs = new double[51];
+            for (int i = 0; i < 51; i++)
+            {
+                SVPs[i] = SaturationVaporPressure(Temps[i]);
+            }
             for (int j = 0; j < 10; j++)
             {
                 bool isShowVE = false;
-                arh += 0.02f;
-                SeriesCollection[j].Values.Clear();
+
+                for (int i = 0; i < 51; i++)
+                {
+                    //数据计算
+                    double mc = MoistureContent(SVPs[i], arh[j], pressure);
+                    Labels[j][i] = mc;
+
+                    var op = new ObservablePoint(Labels[j][i], Temps[i]);
+                    //显示线
+                    SeriesCollection[j].Values.Add(op);
+                    //显示标志
+                    if ((Temps[i] >= 40.0) && !isShowVE)
+                    {
+                        Visuals[j].X = Labels[j][i];
+                        Visuals[j].Y = 39;
+                        isShowVE = true;
+
+                    }
+                    else if (Labels[j][i] >= 50 && !isShowVE)
+                    {
+                        Visuals[j].X = 49;
+                        Visuals[j].Y = Temps[i];
+                        isShowVE = true;
+
+                    }
+
+                    //调试信息
+                    //Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
+
+                }
+            }
+        }
+        public void UpdateXDSD(double pressure)
+        {
+            for (int j = 0; j < 10; j++)
+            {
+                bool isShowVE = false;
+
                 for (int i = 0; i < 51; i++)
                 {
                     //数据计算
                     double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
-                    double mc = MoistureContent(svp, arh, pressure);
+                    double mc = MoistureContent(svp, arh[j], pressure);
                     Labels[j][i] = mc;
 
-                    var op = new ObservablePoint(Labels[j][i], Temps[i]);
-                    //
-                    SeriesCollection[j].Values.Add(op);
-                    
-                    if(((Temps[i] >= 40.0) || (Labels[j][i] >= 50)) && !isShowVE)
+                    //显示线 
+                    ObservablePoint op = (ObservablePoint)SeriesCollection[j].Values[i];
+                    op.X = Labels[j][i];
+                    op.Y = Temps[i];
+                    if ((Temps[i] >= 40.0) && !isShowVE)
                     {
-                        double x = Labels[j][i];
-                        double y = Temps[i];
-                        if (Temps[i] >= 40.0)
-                            x = 39.0;
-                        else if (Labels[j][i] >= 50)
-                            y = 49.0;
- 
-                        var ve = new VisualElement
-                        {
-                            X = x,
-                            Y = y,
-                            HorizontalAlignment = HorizontalAlignment.Left,
-                            VerticalAlignment = VerticalAlignment.Bottom,
-                            UIElement = new XDSDVEControl(arh)
-                        };
-                        Visuals.Add(ve);
+                        Visuals[j].X = Labels[j][i];
+                        Visuals[j].Y = 39;
                         isShowVE = true;
+
                     }
-                    
-                    //调试信息
-                    //Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
+                    else if (Labels[j][i] >= 50 && !isShowVE)
+                    {
+                        Visuals[j].X = 49;
+                        Visuals[j].Y = Temps[i];
+                        isShowVE = true;
+
+                    }
 
                 }
             }
@@ -145,7 +189,7 @@ namespace HSTDemo
         {
             if (e.Key == Key.Enter)
             {
-                UpdateXDSD(133);
+                UpdateXDSD(Pressure);
 
                 Console.Write("压强：" + Pressure);
             }
