@@ -2,7 +2,10 @@
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System;
+using System.ComponentModel;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 
 namespace HSTDemo
@@ -10,23 +13,72 @@ namespace HSTDemo
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        public SeriesCollection SeriesCollection { get; set; }
-        //public VisualElement XDSDVisualElement { get; set; }
-        public VisualElementsCollection Visuals { get; set; }
+        private SeriesCollection seriescCollection;
+        public SeriesCollection SeriesCollection 
+        {
+            get
+            {
+                return seriescCollection;
+            }
+            set 
+            {
+                seriescCollection = value;
+                OnPropertyChanged("SeriesCollection");
+            }
+        
+        }
+        public VisualElement XDSDVisualElement { get; set; }
+
+        public VisualElementsCollection visuals;
+
+        public VisualElementsCollection Visuals
+        {
+            get { return visuals; }
+            set
+            {
+                visuals = value;
+                OnPropertyChanged("Visuals");
+            }
+        }
 
         public double[][] Labels;
         public double[] Temps;
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            PropertyChangedEventHandler handler = this.PropertyChanged;
+            if(handler != null)
+            {
+                handler(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public double Pressure { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
-            SeriesCollection = new SeriesCollection{};
+
+
+            //ConsoleManager.Show();//打开控制台窗口
+            //UpdateXDSD(1013.25);
+                UpdateXDSD(1033);
+
+
+
+            DataContext = this;
+
+        }
+        public void UpdateXDSD(double pressure)
+        {
             double arh = 0.1f;
+            Visuals = new VisualElementsCollection { };
+            SeriesCollection = new SeriesCollection { };
             Labels = new double[10][];
 
-            Visuals = new VisualElementsCollection { };
-     
             for (int i = 0; i < 10; i++)
             {
                 Labels[i] = new double[51];
@@ -41,29 +93,38 @@ namespace HSTDemo
                     }
                     );
             }
-            
+
             GetTemperature(out Temps);
 
-            ConsoleManager.Show();//打开控制台窗口
             for (int j = 0; j < 10; j++)
             {
                 bool isShowVE = false;
                 arh += 0.02f;
+                SeriesCollection[j].Values.Clear();
                 for (int i = 0; i < 51; i++)
                 {
                     //数据计算
                     double svp = SaturationVaporPressure(Temps[i]); //饱和水蒸气压力PˋˋhPa
-                    double mc = MoistureContent(svp, arh, 1013.0f);
+                    double mc = MoistureContent(svp, arh, pressure);
                     Labels[j][i] = mc;
 
                     var op = new ObservablePoint(Labels[j][i], Temps[i]);
+                    //
                     SeriesCollection[j].Values.Add(op);
-                    if((Temps[i] >= 40.0 || Labels[j][i] >= 50) && !isShowVE)
+                    
+                    if(((Temps[i] >= 40.0) || (Labels[j][i] >= 50)) && !isShowVE)
                     {
+                        double x = Labels[j][i];
+                        double y = Temps[i];
+                        if (Temps[i] >= 40.0)
+                            x = 39.0;
+                        else if (Labels[j][i] >= 50)
+                            y = 49.0;
+ 
                         var ve = new VisualElement
                         {
-                            X = Labels[j][i-1],
-                            Y = Temps[i-1],
+                            X = x,
+                            Y = y,
                             HorizontalAlignment = HorizontalAlignment.Left,
                             VerticalAlignment = VerticalAlignment.Bottom,
                             UIElement = new XDSDVEControl(arh)
@@ -71,16 +132,30 @@ namespace HSTDemo
                         Visuals.Add(ve);
                         isShowVE = true;
                     }
+                    
                     //调试信息
-                    Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
+                    //Console.Write(Temps[i] + "   " + svp + "   " + mc + "\n");
 
                 }
             }
 
-
-            DataContext = this;
-
         }
+
+        private void PressureKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                UpdateXDSD(133);
+
+                Console.Write("压强：" + Pressure);
+            }
+        }
+
+        private void PressureMouseLeave(object sender, MouseEventArgs e)
+        {
+            //Console.Write("压强：" + Pressure);
+        }
+
         //计算函数
         public void GetTemperature(out double[] labels)
         {
@@ -118,6 +193,14 @@ namespace HSTDemo
             return MC;
         }
 
+
+
+
+        //private void PressureTextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
+        //{
+        //   if(e.)
+        //    Console.Write("压强：" + Pressure);
+        //}
     }
 }
 
