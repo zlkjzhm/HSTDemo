@@ -6,9 +6,14 @@
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
         xmlns:local="clr-namespace:HSTDemo"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="450" Width="800" Background="Gray" WindowState="Maximized" >
     <Grid>
-        <lvc:CartesianChart Grid.Row="0" VisualElements="{Binding Visuals}" Series="{Binding SeriesCollection}" LegendLocation="None" Background="Gray">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <lvc:CartesianChart x:Name="cartesianChart" VisualElements="{Binding Visuals, UpdateSourceTrigger=PropertyChanged}"  Grid.Row="0"  Series="{Binding SeriesCollection, UpdateSourceTrigger=PropertyChanged}" LegendLocation="None" Background="Gray" >
+
             <!--定义X轴-->
             <lvc:CartesianChart.AxisY>
                 <lvc:Axis Title="温度" MaxValue="40" MinValue="-10">
@@ -17,7 +22,7 @@
                     </lvc:Axis.Separator>
                 </lvc:Axis>
             </lvc:CartesianChart.AxisY>
-            
+
             <!--定义X轴-->
 
             <lvc:CartesianChart.AxisX>
@@ -42,5 +47,7 @@
                 </lvc:VisualElement>
             </lvc:CartesianChart.VisualElements>-->
         </lvc:CartesianChart>
+        <TextBox Width="65" Height="30" Text="{Binding Pressure, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" KeyUp="PressureKeyUp" MouseLeave="PressureMouseLeave" />
+
     </Grid>
 </Window>
