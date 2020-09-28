@@ -61,10 +61,14 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="XDSDVEControl.xaml.cs">
+    <Compile Include="Models\HSAtmosphere.cs" />
+    <Compile Include="Models\HSChart.cs" />
+    <Compile Include="ViewModels\HSAtmosphereViewModel.cs" />
+    <Compile Include="ViewModels\HSChartViewModel.cs" />
+    <Compile Include="Views\XDSDVEControl.xaml.cs">
       <DependentUpon>XDSDVEControl.xaml</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
+    <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -73,11 +77,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="ConsoleManager.cs" />
-    <Compile Include="MainWindow.xaml.cs">
+    <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="XDSDVEControl.xaml">
+    <Page Include="Views\XDSDVEControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -108,6 +112,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Commands\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\FzyMVVM\FzyMVVM.csproj">
+      <Project>{e4eb11b0-8a74-466e-be0b-7f46c113d545}</Project>
+      <Name>FzyMVVM</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
