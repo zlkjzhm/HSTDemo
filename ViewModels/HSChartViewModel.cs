@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Media;
 using FzyMVVM;
 using HSTDemo.Models;
@@ -25,6 +26,9 @@ namespace HSTDemo.ViewModels
         public const int TEMP_MIN = -20;   //显示的最小温度
         private const int TEMP_INCREMENT = 1; //显示的温度的增量
         private const int TEMP_LENGTH = TEMP_MAX - TEMP_MIN + 1;    //温度刻度的数量
+
+        public const int MC_MAX = 50;    //显示的最大温度
+        public const int MC_MIN = 0;   //显示的最小温度
 
         private const int ARH_LINE_COUNT = 20; //相对湿度线的数量
         private const double ARH_TO_SHOW_MIN= 0.05; //显示的最小相对湿度
@@ -63,6 +67,7 @@ namespace HSTDemo.ViewModels
         {
             GetAtmosphereTables(out _tempsList, out _svpList, out _arhToShowList);
             SeriesCollection = new SeriesCollection();
+            CartesianVisuals = new VisualElementsCollection();
             for (int j = 0; j < ARH_LINE_COUNT; j++)
             {
                 LineSeries ls = new LineSeries
@@ -74,6 +79,14 @@ namespace HSTDemo.ViewModels
                     //DataLabels = true,
                 };
 
+                VisualElement ve = new VisualElement
+                {
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Bottom,
+                    UIElement = new XDSDVEControl(_arhToShowList[j])
+                };
+                double lastX = 0; //TODO:这里还没改完
+                double lastY = 0;
                 for (int i = 0; i < TEMP_LENGTH; i++)
                 {
                     //数据计算
@@ -82,8 +95,19 @@ namespace HSTDemo.ViewModels
                     var op = new ObservablePoint(mc, _tempsList[i]);
                     //显示线
                     ls.Values.Add(op);
+                    if(_tempsList[i] >= TEMP_MAX || mc >= MC_MAX)
+                    {
+                        lastX = mc;
+                        lastY = _tempsList[i];
+                    }
                 }
                 SeriesCollection.Add(ls);
+                //显示标志
+                ve.X = lastX;
+                ve.Y = lastY;
+                CartesianVisuals.Add(ve);
+
+
             }
 
 

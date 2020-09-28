@@ -15,8 +15,13 @@
             <RowDefinition Height="3*"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <!--VisualElements="{Binding Visuals, UpdateSourceTrigger=PropertyChanged}"-->
-        <lvc:CartesianChart x:Name="cartesianChart"   Grid.Row="0"  Series="{Binding SeriesCollection, UpdateSourceTrigger=PropertyChanged}" LegendLocation="None" Background="Gray" >
+        <!---->
+        <lvc:CartesianChart x:Name="cartesianChart"   
+                            Grid.Row="0"  
+                            VisualElements="{Binding CartesianVisuals, UpdateSourceTrigger=PropertyChanged}"
+                            Series="{Binding SeriesCollection, UpdateSourceTrigger=PropertyChanged}" 
+                            LegendLocation="None" 
+                            Background="Gray" >
 
             <!--定义Y轴-->
             <lvc:CartesianChart.AxisY>
