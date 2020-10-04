@@ -61,7 +61,7 @@ namespace HSTDemo
         //           {
         //               HorizontalAlignment = HorizontalAlignment.Left,
         //               VerticalAlignment = VerticalAlignment.Center,
-        //               UIElement = new XDSDVEControl(arh[i])
+        //               UIElement = new HSVEControl(arh[i])
         //           }
         //            );
         //    }

@@ -56,7 +56,11 @@
                 </lvc:VisualElement>
             </lvc:CartesianChart.VisualElements>-->
         </lvc:CartesianChart>
-        <!--<TextBox Width="65" Height="30" Text="{Binding Pressure, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" KeyUp="PressureKeyUp" MouseLeave="PressureMouseLeave" />-->
+        <TextBox Width="65" 
+                 Height="30" 
+                 Text="{Binding Pressure, UpdateSourceTrigger=PropertyChanged}" 
+                 Grid.Row="1" 
+                 />
 
     </Grid>
 </Window>

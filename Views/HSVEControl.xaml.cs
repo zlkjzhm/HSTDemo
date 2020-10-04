@@ -16,19 +16,19 @@ using System.Windows.Shapes;
 namespace HSTDemo
 {
     /// <summary>
-    /// XDSDVEControl.xaml 的交互逻辑
+    /// HSVEControl.xaml 的交互逻辑
     /// </summary>
-    public partial class XDSDVEControl : UserControl
+    public partial class HSVEControl : UserControl
     {
         public double XDSD { get; set; }
         public string sXDSD { get; set; }
 
-        public XDSDVEControl(double xdsd)
+        public HSVEControl(double xdsd)
         {
-           
+
             InitializeComponent();
             XDSD = xdsd * 100;
-            sXDSD =XDSD.ToString("0") + "%";
+            sXDSD = XDSD.ToString("0") + "%";
             DataContext = this;
         }
     }

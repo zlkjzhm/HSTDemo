@@ -85,7 +85,7 @@ namespace HSTDemo.ViewModels
                 {
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Bottom,
-                    UIElement = new XDSDVEControl(_arhToShowList[j])
+                    UIElement = new HSVEControl(_arhToShowList[j])
                 };
                 double lastX = 0; //TODO:这里还没改完
                 double lastY = 0;
