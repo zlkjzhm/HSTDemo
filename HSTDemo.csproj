@@ -117,8 +117,8 @@
     <Folder Include="Commands\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\FzyMVVM\FzyMVVM.csproj">
-      <Project>{e4eb11b0-8a74-466e-be0b-7f46c113d545}</Project>
+    <ProjectReference Include="FzyMVVM\FzyMVVM.csproj">
+      <Project>{3634806b-7ab1-4c57-9561-ef7d862ff3ef}</Project>
       <Name>FzyMVVM</Name>
     </ProjectReference>
   </ItemGroup>
