@@ -27,8 +27,10 @@ namespace HSTDemo.ViewModels
         private const int TEMP_INCREMENT = 1; //显示的温度的增量
         private const int TEMP_LENGTH = TEMP_MAX - TEMP_MIN + 1;    //温度刻度的数量
 
-        public const int MC_MAX = 50;    //显示的最大温度
-        public const int MC_MIN = 0;   //显示的最小温度
+        public const int MC_MAX = 50;    //显示的最大含湿量
+        public const int MC_MIN = 0;   //显示的最小含湿量
+        private const int MC_INCREMENT = 1; //显示的温度的增量
+
 
         private const int ARH_LINE_COUNT = 20; //相对湿度线的数量
         private const double ARH_TO_SHOW_MIN= 0.05; //显示的最小相对湿度
@@ -91,15 +93,26 @@ namespace HSTDemo.ViewModels
                 {
                     //数据计算
                     double mc = _atmosphere.MoistureContent(_svpList[i], _arhToShowList[j], _atmosphere.AirPressure);
-
                     var op = new ObservablePoint(mc, _tempsList[i]);
                     //显示线
                     ls.Values.Add(op);
-                    if(_tempsList[i] >= TEMP_MAX || mc >= MC_MAX)
+                    if(_tempsList[i] >= TEMP_MAX)
                     {
                         lastX = mc;
                         lastY = _tempsList[i];
                     }
+                    else if(mc >= MC_MAX)
+                    {
+                        lastX = MC_MAX;
+                        lastY = _tempsList[i];
+                    }
+
+                    //不会显示的就不要再遍历了
+                    if (mc >= MC_MAX)
+                    {
+                        break;
+                    }
+
                 }
                 SeriesCollection.Add(ls);
                 //显示标志
