@@ -4,12 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
-        xmlns:local="clr-namespace:HSTDemo" xmlns:viewmodel="clr-namespace:HSTDemo.ViewModels"
+        xmlns:local="clr-namespace:HSTDemo" 
+        xmlns:viewmodels="clr-namespace:HSTDemo.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Background="Gray" WindowState="Maximized" >
-    <Window.DataContext>
-        <viewmodel:HSChartViewModel/>
-    </Window.DataContext>
+    <!--<Window.DataContext>
+        <viewmodels:HSChartViewModel/>
+    </Window.DataContext>-->
+    <Window.Resources>
+        <viewmodels:HSChartViewModel x:Key="chartvm"/>
+        <!--<viewmodels:HSAtmosphereViewModel x:Key="atomspherevm"/>-->
+    </Window.Resources>
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="3*"/>
@@ -18,8 +23,8 @@
         <!---->
         <lvc:CartesianChart x:Name="cartesianChart"   
                             Grid.Row="0"  
-                            VisualElements="{Binding CartesianVisuals, UpdateSourceTrigger=PropertyChanged}"
-                            Series="{Binding SeriesCollection, UpdateSourceTrigger=PropertyChanged}" 
+                            VisualElements="{Binding CartesianVisuals, Source={StaticResource chartvm}}"
+                            Series="{Binding SeriesCollection, Source={StaticResource chartvm}}" 
                             LegendLocation="None" 
                             Background="Gray" >
 
@@ -56,11 +61,17 @@
                 </lvc:VisualElement>
             </lvc:CartesianChart.VisualElements>-->
         </lvc:CartesianChart>
-        <TextBox Width="65" 
-                 Height="30" 
-                 Text="{Binding Pressure, UpdateSourceTrigger=PropertyChanged}" 
-                 Grid.Row="1" 
-                 />
+        <StackPanel Grid.Row="1">
+            <TextBox Width="65" 
+                     Height="30" 
+                     Text="{Binding Pressure, Source={StaticResource chartvm}}"       
+                    />
+            <Button Width="65" 
+                    Height="30" 
+                    Content="Update" 
+                    Command="{Binding UpdatePressureName, Source={StaticResource chartvm}}"/>
+        </StackPanel>
+        
 
     </Grid>
 </Window>

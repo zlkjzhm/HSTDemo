@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Input;
 using System.Windows.Media;
 using FzyMVVM;
 using HSTDemo.Models;
@@ -39,6 +40,16 @@ namespace HSTDemo.ViewModels
 
         private HSChart _chart;
         private HSAtmosphere _atmosphere;
+
+        public double Pressure
+        {
+            get { return _atmosphere.AirPressure; }
+            set
+            {
+                _atmosphere.AirPressure = value;
+                RaisePropertyChanged("Pressure");
+            }
+        }
 
         private double[] _tempsList;
         private double[] _svpList;
@@ -87,12 +98,12 @@ namespace HSTDemo.ViewModels
                     VerticalAlignment = VerticalAlignment.Bottom,
                     UIElement = new HSVEControl(_arhToShowList[j])
                 };
-                double lastX = 0; //TODO:这里还没改完
+                double lastX = 0;
                 double lastY = 0;
                 for (int i = 0; i < TEMP_LENGTH; i++)
                 {
                     //数据计算
-                    double mc = _atmosphere.MoistureContent(_svpList[i], _arhToShowList[j], _atmosphere.AirPressure);
+                    double mc = _atmosphere.MoistureContent(_svpList[i], _arhToShowList[j], Pressure);
                     var op = new ObservablePoint(mc, _tempsList[i]);
                     //显示线
                     ls.Values.Add(op);
@@ -119,13 +130,67 @@ namespace HSTDemo.ViewModels
                 ve.X = lastX;
                 ve.Y = lastY;
                 CartesianVisuals.Add(ve);
-
-
             }
 
-
         }
+        private void UpdateChart()
+        {
+            ///GetAtmosphereTables(out _tempsList, out _svpList, out _arhToShowList);
+            //SeriesCollection = new SeriesCollection();
+            //CartesianVisuals = new VisualElementsCollection();
+            for (int j = 0; j < ARH_LINE_COUNT; j++)
+            {
+                //LineSeries ls = new LineSeries
+                //{
+                //    Values = new ChartValues<ObservablePoint> { },
+                //    LineSmoothness = 0,
+                //    Fill = Brushes.Transparent,
+                //    PointGeometrySize = 0,
+                //    //DataLabels = true,
+                //};
 
+                //VisualElement ve = new VisualElement
+                //{
+                //    HorizontalAlignment = HorizontalAlignment.Left,
+                //    VerticalAlignment = VerticalAlignment.Bottom,
+                //    UIElement = new HSVEControl(_arhToShowList[j])
+                //};
+                double lastX = 0; 
+                double lastY = 0;
+                for (int i = 0; i < TEMP_LENGTH; i++)
+                {
+                    //数据计算
+                    double mc = _atmosphere.MoistureContent(_svpList[i], _arhToShowList[j], Pressure);
+                   // var op = new ObservablePoint(mc, _tempsList[i]);
+                    //显示线
+                    ObservablePoint op = (ObservablePoint)SeriesCollection[j].Values[i];
+                    op.X = mc;
+                    op.Y = _tempsList[i];
+                    if (_tempsList[i] >= TEMP_MAX)
+                    {
+                        lastX = mc;
+                        lastY = _tempsList[i];
+                    }
+                    else if (mc >= MC_MAX)
+                    {
+                        lastX = MC_MAX;
+                        lastY = _tempsList[i];
+                    }
+
+                    //不会显示的就不要再遍历了
+                    if (mc >= MC_MAX)
+                    {
+                        break;
+                    }
+
+                }
+                //SeriesCollection.Add(ls);
+                //显示标志
+                CartesianVisuals[j].X = lastX;
+                CartesianVisuals[j].Y = lastY;
+                //CartesianVisuals.Add(ve);
+            }
+        }
 
         //计算函数
         private void GetAtmosphereTables(out double[] temps, out double[] svps, out double[] arhs)
@@ -153,7 +218,21 @@ namespace HSTDemo.ViewModels
                 svps[i] = _atmosphere.SaturationVaporPressure(temps[i]);
 
             }
+        }
+        void UpdatePressureExecute()
+        {
+            //_atmosphere.AirPressure = 1.111f;
+            UpdateChart();
+        }
 
+        bool CanUpdatePressureNameExecute()
+        {
+            return true;
+        }
+
+        public ICommand UpdatePressureName 
+        { 
+            get { return new RelayCommand(UpdatePressureExecute, CanUpdatePressureNameExecute); } 
         }
     }
 }

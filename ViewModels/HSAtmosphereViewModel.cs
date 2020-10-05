@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FzyMVVM;
+using System.Windows.Input;
+
 namespace HSTDemo.ViewModels
 {
     class HSAtmosphereViewModel : ObservableObject
@@ -34,6 +36,8 @@ namespace HSTDemo.ViewModels
                 RaisePropertyChanged("RelativeHumidity");
             }
         }
+
+
 
     }
 }
