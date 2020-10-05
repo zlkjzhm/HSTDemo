@@ -72,13 +72,6 @@ namespace HSTDemo.ViewModels
                         }
                     }
 
-
-                    //不会显示的就不要再遍历了
-                    //if (mc >= MC_MAX)
-                    //{
-                    //    break;
-                    //}
-
                 }
                 _seriesCollection.Add(ls);
                 //显示标志
@@ -119,12 +112,6 @@ namespace HSTDemo.ViewModels
                             lastY = _tempsList[i];
                         }
                     }
-
-                    //不会显示的就不要再遍历了
-                    //if (mc >= MC_MAX)
-                    //{
-                    //    break;
-                    //}
 
                 }
                 //SeriesCollection.Add(ls);
