@@ -30,7 +30,7 @@ namespace HSTDemo.ViewModels
 
         public const int MC_MAX = 50;    //显示的最大含湿量
         public const int MC_MIN = 0;   //显示的最小含湿量
-        private const int MC_INCREMENT = 1; //显示的温度的增量
+        //private const int MC_INCREMENT = 1; //显示的温度的增量
 
 
         private const int ARH_LINE_COUNT = 20; //相对湿度线的数量
@@ -100,6 +100,7 @@ namespace HSTDemo.ViewModels
                 };
                 double lastX = 0;
                 double lastY = 0;
+                bool hasShowEV = false;
                 for (int i = 0; i < TEMP_LENGTH; i++)
                 {
                     //数据计算
@@ -107,22 +108,28 @@ namespace HSTDemo.ViewModels
                     var op = new ObservablePoint(mc, _tempsList[i]);
                     //显示线
                     ls.Values.Add(op);
-                    if(_tempsList[i] >= TEMP_MAX)
+                    if(!hasShowEV)
                     {
-                        lastX = mc;
-                        lastY = _tempsList[i];
+                        if (_tempsList[i] >= TEMP_MAX)
+                        {
+                            hasShowEV = true;
+                            lastX = mc;
+                            lastY = _tempsList[i];
+                        }
+                        else if (mc >= MC_MAX)
+                        {
+                            hasShowEV = true;
+                            lastX = MC_MAX;
+                            lastY = _tempsList[i];
+                        }
                     }
-                    else if(mc >= MC_MAX)
-                    {
-                        lastX = MC_MAX;
-                        lastY = _tempsList[i];
-                    }
+                    
 
                     //不会显示的就不要再遍历了
-                    if (mc >= MC_MAX)
-                    {
-                        break;
-                    }
+                    //if (mc >= MC_MAX)
+                    //{
+                    //    break;
+                    //}
 
                 }
                 SeriesCollection.Add(ls);
@@ -135,28 +142,11 @@ namespace HSTDemo.ViewModels
         }
         private void UpdateChart()
         {
-            ///GetAtmosphereTables(out _tempsList, out _svpList, out _arhToShowList);
-            //SeriesCollection = new SeriesCollection();
-            //CartesianVisuals = new VisualElementsCollection();
             for (int j = 0; j < ARH_LINE_COUNT; j++)
             {
-                //LineSeries ls = new LineSeries
-                //{
-                //    Values = new ChartValues<ObservablePoint> { },
-                //    LineSmoothness = 0,
-                //    Fill = Brushes.Transparent,
-                //    PointGeometrySize = 0,
-                //    //DataLabels = true,
-                //};
-
-                //VisualElement ve = new VisualElement
-                //{
-                //    HorizontalAlignment = HorizontalAlignment.Left,
-                //    VerticalAlignment = VerticalAlignment.Bottom,
-                //    UIElement = new HSVEControl(_arhToShowList[j])
-                //};
                 double lastX = 0; 
                 double lastY = 0;
+                bool hasShowEV = false;
                 for (int i = 0; i < TEMP_LENGTH; i++)
                 {
                     //数据计算
@@ -166,22 +156,27 @@ namespace HSTDemo.ViewModels
                     ObservablePoint op = (ObservablePoint)SeriesCollection[j].Values[i];
                     op.X = mc;
                     op.Y = _tempsList[i];
-                    if (_tempsList[i] >= TEMP_MAX)
+                    if(!hasShowEV)
                     {
-                        lastX = mc;
-                        lastY = _tempsList[i];
-                    }
-                    else if (mc >= MC_MAX)
-                    {
-                        lastX = MC_MAX;
-                        lastY = _tempsList[i];
+                        if (_tempsList[i] >= TEMP_MAX)
+                        {
+                            hasShowEV = true;
+                            lastX = mc;
+                            lastY = _tempsList[i];
+                        }
+                        else if (mc >= MC_MAX)
+                        {
+                            hasShowEV = true;
+                            lastX = MC_MAX;
+                            lastY = _tempsList[i];
+                        }
                     }
 
                     //不会显示的就不要再遍历了
-                    if (mc >= MC_MAX)
-                    {
-                        break;
-                    }
+                    //if (mc >= MC_MAX)
+                    //{
+                    //    break;
+                    //}
 
                 }
                 //SeriesCollection.Add(ls);
