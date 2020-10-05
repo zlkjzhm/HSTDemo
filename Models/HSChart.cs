@@ -9,6 +9,11 @@ namespace HSTDemo.Models
 {
     class HSChart
     {
+        public HSChart()
+        {
+            _seriesCollection = new SeriesCollection();
+            _cartesianVisuals = new VisualElementsCollection();
+        }
         private SeriesCollection _seriesCollection;
 
         public SeriesCollection SeriesCollection

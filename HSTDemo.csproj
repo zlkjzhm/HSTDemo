@@ -61,10 +61,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="LinesDatabase.cs" />
     <Compile Include="Models\HSAtmosphere.cs" />
     <Compile Include="Models\HSChart.cs" />
+    <Compile Include="ViewModels\HSARHViewModel.cs" />
     <Compile Include="ViewModels\HSAtmosphereViewModel.cs" />
     <Compile Include="ViewModels\HSChartViewModel.cs" />
+    <Compile Include="ViewModels\LineViewModelBase.cs" />
     <Compile Include="Views\HSVEControl.xaml.cs">
       <DependentUpon>HSVEControl.xaml</DependentUpon>
     </Compile>
